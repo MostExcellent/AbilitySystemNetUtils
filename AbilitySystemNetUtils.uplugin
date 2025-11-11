@@ -9,9 +9,9 @@
 	"CreatedByURL": "https://github.com/MostExcellent/",
 	"DocsURL": "",
 	"MarketplaceURL": "",
-	"CanContainContent": true,
+	"CanContainContent": false,
 	"IsBetaVersion": true,
-	"IsExperimentalVersion": true,
+	"IsExperimentalVersion": false,
 	"Installed": true,
 	"Modules": [
 		{
