@@ -1,0 +1,23 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "AbilitySystemNetUtils",
+	"Description": "Common functionality for using GAS in a networked game",
+	"Category": "Gameplay",
+	"CreatedBy": "David Glover",
+	"CreatedByURL": "https://github.com/MostExcellent/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "AbilitySystemNetUtils",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
