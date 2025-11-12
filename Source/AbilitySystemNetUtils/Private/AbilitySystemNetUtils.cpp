@@ -2,6 +2,8 @@
 
 #include "AbilitySystemNetUtils.h"
 
+DEFINE_LOG_CATEGORY(LogAbilitySystemNetUtils);
+
 #define LOCTEXT_NAMESPACE "FAbilitySystemNetUtilsModule"
 
 void FAbilitySystemNetUtilsModule::StartupModule()
