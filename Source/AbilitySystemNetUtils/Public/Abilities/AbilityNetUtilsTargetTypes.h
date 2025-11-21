@@ -29,7 +29,6 @@ SOFTWARE.
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "AbilityNetUtilsTargetTypes.generated.h"
 
-//@todo: Equivalents for the rest of GameplayAbilitiesTargetTypes
 
 /**
  * Target data with additional virtual functions to support network prediction patterns
@@ -64,17 +63,118 @@ struct FNetworkedAbilityTargetData : public FGameplayAbilityTargetData
 };
 
 /**
+ * Timestamped target data with only an origin location
+ */
+USTRUCT(BlueprintType)
+struct FNetworkedAbilityTargetData_OriginInfo : public FNetworkedAbilityTargetData
+{
+	GENERATED_BODY()
+
+	/** Struct with timestamp, local RTT estimate, and integer reconciliation ID **/
+	UPROPERTY(BlueprintReadWrite, Category = Targeting, meta = (ExposeOnSpawn = true))
+	FNetworkGameplayRequestInfo ReplicationInfo;
+
+	/** Generic location data for the origin */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Targeting)
+	FGameplayAbilityTargetingLocationInfo OriginLocation;
+
+	virtual bool HasTimestamp() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::Timestamp); }
+	virtual float GetTimestamp() const override { return ReplicationInfo.Timestamp; }
+
+	virtual bool HasEstimateRTT() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::EstimateRTT); }
+	virtual float GetEstimateRTT() const override { return ReplicationInfo.EstimateRTT; }
+
+	virtual bool HasReconciliationId() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::ReconciliationId); }
+	virtual int32 GetReconciliationId() const override { return ReplicationInfo.ReconciliationId; }
+
+	virtual bool HasOrigin() const override { return true; }
+	virtual FTransform GetOrigin() const override { return OriginLocation.GetTargetingTransform(); }
+
+	virtual UScriptStruct* GetScriptStruct() const override
+	{
+		return FNetworkedAbilityTargetData_OriginInfo::StaticStruct();
+	}
+
+	virtual FString ToString() const override
+	{
+		return TEXT("FNetworkedAbilityTargetData_OriginInfo");
+	}
+
+	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+};
+
+template <>
+struct TStructOpsTypeTraits<FNetworkedAbilityTargetData_OriginInfo> : TStructOpsTypeTraitsBase2<FNetworkedAbilityTargetData_OriginInfo>
+{
+	enum
+	{
+		WithNetSerializer = true
+	};
+};
+
+/**
+ * Timestamped target data with only a target location
+ */
+USTRUCT(BlueprintType)
+struct FNetworkedAbilityTargetData_TargetLocationInfo : public FNetworkedAbilityTargetData
+{
+	GENERATED_BODY()
+
+	/** Struct with timestamp, local RTT estimate, and integer reconciliation ID **/
+	UPROPERTY(BlueprintReadWrite, Category = Targeting, meta = (ExposeOnSpawn = true))
+	FNetworkGameplayRequestInfo ReplicationInfo;
+
+	/** Generic location data for target */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Targeting)
+	FGameplayAbilityTargetingLocationInfo TargetLocation;
+
+	virtual bool HasTimestamp() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::Timestamp); }
+	virtual float GetTimestamp() const override { return ReplicationInfo.Timestamp; }
+
+	virtual bool HasEstimateRTT() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::EstimateRTT); }
+	virtual float GetEstimateRTT() const override { return ReplicationInfo.EstimateRTT; }
+
+	virtual bool HasReconciliationId() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::ReconciliationId); }
+	virtual int32 GetReconciliationId() const override { return ReplicationInfo.ReconciliationId; }
+
+	virtual bool HasEndPoint() const override { return true; }
+	virtual FVector GetEndPoint() const override { return TargetLocation.GetTargetingTransform().GetLocation(); }
+	virtual FTransform GetEndPointTransform() const override { return TargetLocation.GetTargetingTransform(); }
+
+	virtual UScriptStruct* GetScriptStruct() const override
+	{
+		return FNetworkedAbilityTargetData_TargetLocationInfo::StaticStruct();
+	}
+
+	virtual FString ToString() const override
+	{
+		return TEXT("FNetworkedAbilityTargetData_TargetLocationInfo");
+	}
+
+	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+};
+
+template <>
+struct TStructOpsTypeTraits<FNetworkedAbilityTargetData_TargetLocationInfo> : TStructOpsTypeTraitsBase2<FNetworkedAbilityTargetData_TargetLocationInfo>
+{
+	enum
+	{
+		WithNetSerializer = true
+	};
+};
+
+/**
  * Timestamped target data with an origin and target location
  */
 USTRUCT(BlueprintType)
 struct FNetworkedAbilityTargetData_LocationInfo : public FNetworkedAbilityTargetData
 {
 	GENERATED_BODY()
-	
+
 	/** Struct with timestamp, local RTT estimate, and integer reconciliation ID **/
 	UPROPERTY(BlueprintReadWrite, Category = Targeting, meta = (ExposeOnSpawn = true))
 	FNetworkGameplayRequestInfo ReplicationInfo;
-	
+
 	/** Generic location data for the origin */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Targeting)
 	FGameplayAbilityTargetingLocationInfo OriginLocation;
@@ -82,16 +182,16 @@ struct FNetworkedAbilityTargetData_LocationInfo : public FNetworkedAbilityTarget
 	/** Generic location data for target */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Targeting)
 	FGameplayAbilityTargetingLocationInfo TargetLocation;
-	
+
 	virtual bool HasTimestamp() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::Timestamp); }
 	virtual float GetTimestamp() const override { return ReplicationInfo.Timestamp; }
-	
+
 	virtual bool HasEstimateRTT() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::EstimateRTT); }
 	virtual float GetEstimateRTT() const override { return ReplicationInfo.EstimateRTT; }
-	
+
 	virtual bool HasReconciliationId() const override { return ReplicationInfo.CheckFlag(ENetRequestFlags::ReconciliationId); }
 	virtual int32 GetReconciliationId() const override { return ReplicationInfo.ReconciliationId; }
-	
+
 	virtual bool HasOrigin() const override { return true; }
 	virtual FTransform GetOrigin() const override { return OriginLocation.GetTargetingTransform(); }
 
@@ -113,7 +213,7 @@ struct FNetworkedAbilityTargetData_LocationInfo : public FNetworkedAbilityTarget
 };
 
 template <>
-struct TStructOpsTypeTraits<FNetworkedAbilityTargetData_LocationInfo> : public TStructOpsTypeTraitsBase2<FNetworkedAbilityTargetData_LocationInfo>
+struct TStructOpsTypeTraits<FNetworkedAbilityTargetData_LocationInfo> : TStructOpsTypeTraitsBase2<FNetworkedAbilityTargetData_LocationInfo>
 {
 	enum
 	{
