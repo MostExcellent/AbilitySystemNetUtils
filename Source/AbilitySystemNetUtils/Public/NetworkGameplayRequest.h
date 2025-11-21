@@ -40,7 +40,7 @@ enum class ENetRequestFlags : uint8
  * Packages the core request timing/replication info.
  */
 USTRUCT(BlueprintType)
-struct FNetworkGameplayRequestInfo
+struct ABILITYSYSTEMNETUTILS_API FNetworkGameplayRequestInfo
 {
 	GENERATED_BODY()
 	
